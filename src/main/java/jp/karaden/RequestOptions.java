@@ -2,7 +2,12 @@ package jp.karaden;
 
 
 import java.net.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 
+import jp.karaden.exception.InvalidRequestOptionsException;
+import jp.karaden.model.Error;
+import jp.karaden.model.KaradenObject;
 import okhttp3.HttpUrl;
 
 public class RequestOptions implements Cloneable {
@@ -52,6 +57,87 @@ public class RequestOptions implements Cloneable {
 
     public String getBaseUri() {
         return HttpUrl.parse(this.apiBase).newBuilder().addPathSegment(this.tenantId).build().toString();
+    }
+
+    protected List<String> validateApiVersion() {
+        List<String> messages = new ArrayList<>();
+
+        if (this.apiVersion == null || this.apiVersion.length() == 0) {
+            messages.add("apiVersionは必須です。");
+            messages.add("文字列を入力してください。");
+        }
+
+        return messages;
+    }
+
+    protected List<String> validateApiKey() {
+        List<String> messages = new ArrayList<>();
+
+        if (this.apiKey == null || this.apiKey.length() == 0) {
+            messages.add("apiKeyは必須です。");
+            messages.add("文字列を入力してください。");
+        }
+
+        return messages;
+    }
+
+    protected List<String> validateTenantId() {
+        List<String> messages = new ArrayList<>();
+
+        if (this.tenantId == null || this.tenantId.length() == 0) {
+            messages.add("tenantIdは必須です。");
+            messages.add("文字列を入力してください。");
+        }
+
+        return messages;
+    }
+
+    protected List<String> validateApiBase() {
+        List<String> messages = new ArrayList<>();
+
+        if (this.apiBase == null || this.apiBase.length() == 0) {
+            messages.add("apiBaseは必須です。");
+            messages.add("文字列を入力してください。");
+        }
+
+        return messages;
+    }
+
+    public RequestOptions validate() throws InvalidRequestOptionsException {
+        KaradenObject errors = new KaradenObject();
+        boolean hasError = false;
+
+        List<String> messages = this.validateApiVersion();
+        if (! messages.isEmpty()) {
+            errors.setProperty("apiVersion", messages);
+            hasError = true;
+        }
+
+        messages = this.validateApiKey();
+        if (! messages.isEmpty()) {
+            errors.setProperty("apiKey", messages);
+            hasError = true;
+        }
+
+        messages = this.validateTenantId();
+        if (! messages.isEmpty()) {
+            errors.setProperty("tenantId", messages);
+            hasError = true;
+        }
+
+        messages = this.validateApiBase();
+        if (! messages.isEmpty()) {
+            errors.setProperty("apiBase", messages);
+            hasError = true;
+        }
+
+        if (hasError) {
+            Error error = new Error();
+            error.setProperty("errors", errors);
+            throw new InvalidRequestOptionsException(error);
+        }
+
+        return this;
     }
 
     @Override

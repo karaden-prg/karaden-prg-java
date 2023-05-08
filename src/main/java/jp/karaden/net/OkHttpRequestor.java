@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import jp.karaden.Config;
 import jp.karaden.RequestOptions;
 import jp.karaden.exception.ConnectionException;
+import jp.karaden.exception.InvalidRequestOptionsException;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -28,8 +29,9 @@ public class OkHttpRequestor implements RequestorInterface {
     public OkHttpRequestor() {
     }
 
-    public OkHttpResponse send(String method, String path, Map<String, ?> params, Map<String, ?> data, RequestOptions requestOptions) throws ConnectionException {
+    public OkHttpResponse send(String method, String path, Map<String, ?> params, Map<String, ?> data, RequestOptions requestOptions) throws ConnectionException, InvalidRequestOptionsException {
         requestOptions = Config.asRequestOptions().merge(requestOptions);
+        requestOptions.validate();
 
         okhttp3.Request.Builder requestBuilder = (new okhttp3.Request.Builder())
             .method(method, this.buildFormBody(data))

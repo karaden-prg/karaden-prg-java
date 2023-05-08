@@ -1,10 +1,15 @@
 package jp.karaden;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import jp.karaden.exception.InvalidRequestOptionsException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class RequestOptionsTest {
@@ -124,4 +129,64 @@ def test_proxyを入力できる():
 
     
      */
+
+    static List<String> invalidApiKeyProvider() {
+        return Arrays.asList(null, "");
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidApiKeyProvider")
+    void apiKeyが空文字や未指定はエラー(String apiKey) {
+        RequestOptions.Builder builder = RequestOptions.newBuilder();
+        if (apiKey == null) {
+            builder.withApiKey(apiKey);
+        }
+
+        assertThrows(InvalidRequestOptionsException.class, () -> builder.build().validate());
+    }
+
+    static List<String> invalidApiVersionProvider() {
+        return Arrays.asList(null, "");
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidApiVersionProvider")
+    void apiVersionが空文字や未指定はエラー(String apiVersion) {
+        RequestOptions.Builder builder = RequestOptions.newBuilder();
+        if (apiVersion == null) {
+            builder.withApiVersion(apiVersion);
+        }
+
+        assertThrows(InvalidRequestOptionsException.class, () -> builder.build().validate());
+    }
+
+    static List<String> invalidTenantIdProvider() {
+        return Arrays.asList(null, "");
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidTenantIdProvider")
+    void tenantIdが空文字や未指定はエラー(String tenantId) {
+        RequestOptions.Builder builder = RequestOptions.newBuilder();
+        if (tenantId == null) {
+            builder.withTenantId(tenantId);
+        }
+
+        assertThrows(InvalidRequestOptionsException.class, () -> builder.build().validate());
+    }
+
+    static List<String> invalidApiBaseProvider() {
+        return Arrays.asList(null, "");
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidApiBaseProvider")
+    void apiBaseが空文字や未指定はエラー(String apiBase) {
+        RequestOptions.Builder builder = RequestOptions.newBuilder();
+        if (apiBase == null) {
+            builder.withApiBase(apiBase);
+        }
+
+        assertThrows(InvalidRequestOptionsException.class, () -> builder.build().validate());
+    }
 }

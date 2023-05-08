@@ -12,10 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 class MessageCancelParamsTest {
-    static List<String> invalidParamsProvider() {
-        return Arrays.asList(null, "");
-    }
-
     @Test
     void 正しいパスを生成できる() {
         String id = "id";
@@ -34,12 +30,17 @@ class MessageCancelParamsTest {
         assertEquals(expected, params.id);
     }
 
+    static List<String> invalidIdProvider() {
+        return Arrays.asList(null, "");
+    }
+
     @ParameterizedTest
-    @MethodSource("invalidParamsProvider")
-    void idがnullや空文字はエラー(String expected) {
-        MessageCancelParams params = MessageCancelParams.newBuilder()
-            .withId(expected)
-            .build();
-        assertThrows(InvalidParamsException.class, () -> params.validate());
+    @MethodSource("invalidIdProvider")
+    void idが空文字や未指定はエラー(String id) {
+        MessageCancelParams.Builder builder = MessageCancelParams.newBuilder();
+        if (id != null) {
+            builder.withId(id);
+        }
+        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
     }
 }

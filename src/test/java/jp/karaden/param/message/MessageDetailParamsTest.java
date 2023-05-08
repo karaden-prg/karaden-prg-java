@@ -34,12 +34,17 @@ class MessageDetailParamsTest {
         assertEquals(expected, params.id);
     }
 
+    static List<String> invalidIdProvider() {
+        return Arrays.asList(null, "");
+    }
+
     @ParameterizedTest
-    @MethodSource("invalidParamsProvider")
-    void idがnullや空文字はエラー(String expected) {
-        MessageCancelParams params = MessageCancelParams.newBuilder()
-            .withId(expected)
-            .build();
-        assertThrows(InvalidParamsException.class, () -> params.validate());
+    @MethodSource("invalidIdProvider")
+    void idが空文字や未指定はエラー(String id) {
+        MessageDetailParams.Builder builder = MessageDetailParams.newBuilder();
+        if (id != null) {
+            builder.withId(id);
+        }
+        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
     }
 }

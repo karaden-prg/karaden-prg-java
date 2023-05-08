@@ -45,6 +45,7 @@ class MessageDetailParamsTest {
         if (id != null) {
             builder.withId(id);
         }
-        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        InvalidParamsException e = assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        assertInstanceOf(List.class, e.error.getErrors().getProperty("id"));
     }
 }

@@ -178,7 +178,8 @@ class MessageCreateParamsTest {
         if (serviceId != null) {
             builder.withServiceId(serviceId);
         }
-        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        InvalidParamsException e = assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        assertInstanceOf(List.class, e.error.getErrors().getProperty("serviceId"));
     }
 
     static List<String> invalidToProvider() {
@@ -192,7 +193,8 @@ class MessageCreateParamsTest {
         if (to != null) {
             builder.withTo(to);
         }
-        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        InvalidParamsException e = assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        assertInstanceOf(List.class, e.error.getErrors().getProperty("to"));
     }
 
     static List<String> invalidBodyProvider() {
@@ -206,6 +208,7 @@ class MessageCreateParamsTest {
         if (body != null) {
             builder.withBody(body);
         }
-        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        InvalidParamsException e = assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+        assertInstanceOf(List.class, e.error.getErrors().getProperty("body"));
     }
 }

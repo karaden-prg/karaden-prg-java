@@ -4,5 +4,5 @@ import jp.karaden.exception.InvalidParamsException;
 
 public abstract class MessageParams {
     public final static String CONTEXT_PATH = "/messages";
-    public void validate() throws InvalidParamsException { }
+    public MessageParams validate() throws InvalidParamsException { return this; }
 }

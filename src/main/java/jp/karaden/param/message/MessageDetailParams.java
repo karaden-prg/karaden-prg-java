@@ -29,7 +29,7 @@ public class MessageDetailParams extends MessageParams implements Cloneable {
         return errors;
     }
 
-    public void validate() throws InvalidParamsException {
+    public MessageParams validate() throws InvalidParamsException {
         KaradenObject errors = new KaradenObject();
         boolean hasError = false;
 
@@ -44,6 +44,8 @@ public class MessageDetailParams extends MessageParams implements Cloneable {
             error.setProperty("errors", errors);
             throw new InvalidParamsException(error);
         }
+
+        return this;
     }
 
     @Override

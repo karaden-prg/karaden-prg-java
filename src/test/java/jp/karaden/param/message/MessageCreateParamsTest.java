@@ -1,6 +1,10 @@
 package jp.karaden.param.message;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import jp.karaden.exception.InvalidParamsException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -161,5 +165,47 @@ class MessageCreateParamsTest {
             .build();
 
         assertEquals(expected, params.limitedAt);
+    }
+
+    static List<Integer> invalidServiceIdProvider() {
+        return Arrays.asList(null, 0);
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidServiceIdProvider")
+    void serviceIdが空文字や未指定はエラー(Integer serviceId) {
+        MessageCreateParams.Builder builder = MessageCreateParams.newBuilder();
+        if (serviceId != null) {
+            builder.withServiceId(serviceId);
+        }
+        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+    }
+
+    static List<String> invalidToProvider() {
+        return Arrays.asList(null, "");
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidToProvider")
+    void toが空文字や未指定はエラー(String to) {
+        MessageCreateParams.Builder builder = MessageCreateParams.newBuilder();
+        if (to != null) {
+            builder.withTo(to);
+        }
+        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
+    }
+
+    static List<String> invalidBodyProvider() {
+        return Arrays.asList(null, "");
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidBodyProvider")
+    void bodyが空文字や未指定はエラー(String body) {
+        MessageCreateParams.Builder builder = MessageCreateParams.newBuilder();
+        if (body != null) {
+            builder.withBody(body);
+        }
+        assertThrows(InvalidParamsException.class, () -> builder.build().validate());
     }
 }

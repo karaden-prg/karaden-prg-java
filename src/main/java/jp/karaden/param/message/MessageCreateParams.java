@@ -3,9 +3,14 @@ package jp.karaden.param.message;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import jp.karaden.exception.InvalidParamsException;
+import jp.karaden.model.KaradenObject;
+import jp.karaden.model.Error;
 
 
 public class MessageCreateParams extends MessageParams implements Cloneable {
@@ -49,6 +54,68 @@ public class MessageCreateParams extends MessageParams implements Cloneable {
 
     public String toPath() {
         return MessageCreateParams.CONTEXT_PATH;
+    }
+
+    protected List<String> validateServiceId() {
+        List<String> messages = new ArrayList<>();
+
+        if (this.serviceId == null || this.serviceId <= 0) {
+            messages.add("serviceIdは必須です。");
+            messages.add("数字を入力してください。");
+        }
+
+        return messages;
+    }
+
+    protected List<String> validateTo() {
+        List<String> messages = new ArrayList<>();
+
+        if (this.to == null || this.to.length() == 0) {
+            messages.add("toは必須です。");
+            messages.add("文字列を入力してください。");
+        }
+
+        return messages;
+    }
+
+    protected List<String> validateBody() {
+        List<String> messages = new ArrayList<>();
+
+        if (this.body == null || this.body.length() == 0) {
+            messages.add("bodyは必須です。");
+            messages.add("文字列を入力してください。");
+        }
+
+        return messages;
+    }
+
+    public void validate() throws InvalidParamsException {
+        KaradenObject errors = new KaradenObject();
+        boolean hasError = false;
+
+        List<String> messages = this.validateServiceId();
+        if (! messages.isEmpty()) {
+            errors.setProperty("serviceId", messages);
+            hasError = true;
+        }
+
+        messages = this.validateTo();
+        if (! messages.isEmpty()) {
+            errors.setProperty("to", messages);
+            hasError = true;
+        }
+
+        messages = this.validateBody();
+        if (! messages.isEmpty()) {
+            errors.setProperty("body", messages);
+            hasError = true;
+        }
+
+        if (hasError) {
+            Error error = new Error();
+            error.setProperty("errors", errors);
+            throw new InvalidParamsException(error);
+        }
     }
 
     @Override

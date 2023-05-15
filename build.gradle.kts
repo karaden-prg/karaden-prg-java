@@ -74,8 +74,8 @@ publishing {
                 url.set("https://github.com/karaden-prg/karaden-prg-java")
                 licenses {
                     license {
-                        name.set("")
-                        url.set("")
+                        name.set("MIT LICENSE")
+                        url.set("https://raw.githubusercontent.com/karaden-prg/karaden-prg-java/master/LICENSE")
                     }
                 }
                 developers {

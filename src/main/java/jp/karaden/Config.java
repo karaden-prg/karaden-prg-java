@@ -3,9 +3,9 @@ package jp.karaden;
 import java.net.Proxy;
 
 public class Config {
-    public final static String VERSION = "1.0.1";
+    public final static String VERSION = "1.1.0";
     protected final static String DEFAULT_API_BASE = "https://prg.karaden.jp/api";
-    protected final static String DEFALUT_API_VERSION = "2023-01-01";
+    protected final static String DEFALUT_API_VERSION = "2023-12-01";
 
     public static boolean isLogging = false;
 

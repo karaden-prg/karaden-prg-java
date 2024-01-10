@@ -2,6 +2,7 @@ package jp.karaden.model;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -191,6 +192,24 @@ public class MessageTest {
         Message message = new Message();
         message.setProperty("status", expected);
         assertEquals(expected, message.getStatus());
+    }
+
+    @Test
+    void APIバージョン20230101ではisShortenClickedはnullが出力される() {
+        // APIバージョン2023-01-01ではnullが返ってくる
+        Boolean expected = null;
+        Message message = new Message();
+        message.setProperty("is_shorten_clicked", expected);
+        assertEquals(expected, message.isShortenClicked());
+    }
+
+    @Test
+    void APIバージョン20231201ではisShortenClickedはbooleanが出力される() {
+        // APIバージョン2023-12-01ではbooleanが返ってくる
+        Boolean expected = true;
+        Message message = new Message();
+        message.setProperty("is_shorten_clicked", expected);
+        assertEquals(expected, message.isShortenClicked());
     }
 
     @Test

@@ -53,6 +53,7 @@ public class MockTest {
         assertEquals(1, tags.size());
         assertEquals("string", tags.get(0));
         assertEquals(true, message.isShorten());
+        assertEquals(true, message.isShortenClicked());
         assertEquals("done", message.getResult());
         assertEquals("done", message.getStatus());
         assertEquals("none", message.getSentResult());
@@ -92,6 +93,7 @@ public class MockTest {
         assertEquals(1, tags.size());
         assertEquals("string", tags.get(0));
         assertEquals(true, message.isShorten());
+        assertEquals(true, message.isShortenClicked());
         assertEquals("done", message.getResult());
         assertEquals("done", message.getStatus());
         assertEquals("none", message.getSentResult());
@@ -125,6 +127,7 @@ public class MockTest {
         assertEquals(1, tags.size());
         assertEquals("string", tags.get(0));
         assertEquals(true, message.isShorten());
+        assertEquals(true, message.isShortenClicked());
         assertEquals("done", message.getResult());
         assertEquals("done", message.getStatus());
         assertEquals("none", message.getSentResult());
@@ -158,6 +161,7 @@ public class MockTest {
         assertEquals(1, tags.size());
         assertEquals("string", tags.get(0));
         assertEquals(true, message.isShorten());
+        assertEquals(true, message.isShortenClicked());
         assertEquals("done", message.getResult());
         assertEquals("done", message.getStatus());
         assertEquals("none", message.getSentResult());

@@ -47,6 +47,10 @@ public class Message extends Requestable {
         return (boolean)this.getProperty("is_shorten");
     }
 
+    public Boolean isShortenClicked() {
+        return (Boolean)this.getProperty("is_shorten_clicked");
+    }
+
     public String getResult() {
         return (String)this.getProperty("result");
     }

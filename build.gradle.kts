@@ -105,7 +105,7 @@ dependencies {
 
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-    implementation("org.json:json:20220924")
+    implementation("org.json:json:20231013")
 }
 
 tasks.named<Test>("test") {

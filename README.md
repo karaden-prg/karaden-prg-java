@@ -6,7 +6,7 @@ Karaden Javaライブラリは、Javaで書かれたアプリケーションか�
 ### Gradle
 あなたのプロジェクトのビルドファイルに下記の依存を追加します。
 ```groovy
-implementation 'jp.karaden:karaden-prg-java:1.1.0'
+implementation 'jp.karaden:karaden-prg-java:1.2.0'
 ```
 ### Maven
 あなたのプロジェクトのPOMファイルに下記の依存を追加します。
@@ -14,7 +14,7 @@ implementation 'jp.karaden:karaden-prg-java:1.1.0'
 <dependency>
   <groupId>jp.karaden</groupId>
   <artifactId>karaden-prg-java</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 ## 動作環境
@@ -52,11 +52,23 @@ public class KaradenExample {
 同一のプロセスで複数のキーを使用する必要がある場合、リクエスト毎にキーやテナントIDを設定することができます。
 ```java
 MessageDetailParams params = MessageDetailParams.newBuilder()
-    .withId('<メッセージID>')
+    .withId("<メッセージID>")
     .build();
 RequestOptions requestOptions = RequestOptions.newBuilder()
-    .withApiKey('<トークン>')
-    .withTenantId('<テナントID>')
+    .withApiKey("<トークン>")
+    .withTenantId("<テナントID>")
     .build();
 Message message = Message.detail(params, requestOptions);
+```
+### タイムアウトについて
+通信をするファイルサイズや実行環境の通信速度によってはHTTP通信時にタイムアウトが発生する可能性があります。<br />
+何度も同じような現象が起こる際は、ファイルサイズの調整もしくは`RequestOptions`からタイムアウトの時間を増やして、再度実行してください。<br />
+```java
+RequestOptions requestOptions = RequestOptions.newBuilder()
+    .withApiKey("<トークン>")
+    .withTenantId("<テナントID>")
+    .withConnectionTimeout(<ミリ秒>)
+    .withReadTimeout(<ミリ秒>)
+    .build();
+BulkMessage bulkMessage = BulkMessageService.create("<ファイルパス>", requestOptions);
 ```

@@ -1,6 +1,7 @@
 package jp.karaden;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,12 +12,18 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import jp.karaden.exception.KaradenException;
+import jp.karaden.model.BulkFile;
+import jp.karaden.model.BulkMessage;
 import jp.karaden.model.Collection;
+import jp.karaden.model.Error;
 import jp.karaden.model.Message;
 import jp.karaden.param.message.MessageCancelParams;
 import jp.karaden.param.message.MessageCreateParams;
 import jp.karaden.param.message.MessageDetailParams;
 import jp.karaden.param.message.MessageListParams;
+import jp.karaden.param.message.bulk.BulkMessageCreateParams;
+import jp.karaden.param.message.bulk.BulkMessageListMessageParams;
+import jp.karaden.param.message.bulk.BulkMessageShowParams;
 
 public class MockTest {
     @Test
@@ -173,5 +180,67 @@ public class MockTest {
         assertEquals(datetime, message.getChargedAt());
         assertEquals(datetime, message.getCreatedAt());
         assertEquals(datetime, message.getUpdatedAt());
+    }
+
+    @Test
+    void 一括送信用のアップロード先URL取得() throws KaradenException, IOException, InterruptedException, URISyntaxException {
+        OffsetDateTime datetime = OffsetDateTime.parse("2020-01-31T23:59:59+09:00:00");
+        RequestOptions requestOptions = TestHelper.getDefaultRequestOptionsBuilder()
+            .build();
+        BulkFile bulkFile = BulkFile.create(requestOptions);
+
+        assertEquals("82bdf9de-a532-4bf5-86bc-c9a1366e5f4a", bulkFile.getId());
+        assertEquals("bulk_file", bulkFile.getObject());
+        assertEquals("https://example.com", bulkFile.getUrl());
+        assertEquals(datetime, bulkFile.getCreatedAt());
+        assertEquals(datetime, bulkFile.getExpiresAt());
+    }
+
+    @Test
+    void 一括送信() throws KaradenException, IOException, InterruptedException, URISyntaxException {
+        OffsetDateTime datetime = OffsetDateTime.parse("2020-01-31T23:59:59+09:00:00");
+        BulkMessageCreateParams params = BulkMessageCreateParams.newBuilder()
+            .withBulkFileId("c439f89c-1ea3-7073-7021-1f127a850437")
+            .build();
+        RequestOptions requestOptions = TestHelper.getDefaultRequestOptionsBuilder()
+            .build();
+        BulkMessage bulkMessage = BulkMessage.create(params, requestOptions);
+
+        assertEquals("82bdf9de-a532-4bf5-86bc-c9a1366e5f4a", bulkMessage.getId());
+        assertEquals("bulk_message", bulkMessage.getObject());
+        assertEquals("done", bulkMessage.getStatus());
+        assertInstanceOf(Error.class, bulkMessage.getError());
+        assertEquals(datetime, bulkMessage.getCreatedAt());
+        assertEquals(datetime, bulkMessage.getUpdatedAt());
+    }
+
+    @Test
+    void 一括送信状態取得() throws KaradenException, IOException, InterruptedException, URISyntaxException {
+        OffsetDateTime datetime = OffsetDateTime.parse("2020-01-31T23:59:59+09:00:00");
+        BulkMessageShowParams params = BulkMessageShowParams.newBuilder()
+            .withId("82bdf9de-a532-4bf5-86bc-c9a1366e5f4a")
+            .build();
+        RequestOptions requestOptions = TestHelper.getDefaultRequestOptionsBuilder()
+            .build();
+        BulkMessage bulkMessage = BulkMessage.show(params, requestOptions);
+
+        assertEquals("82bdf9de-a532-4bf5-86bc-c9a1366e5f4a", bulkMessage.getId());
+        assertEquals("bulk_message", bulkMessage.getObject());
+        assertEquals("done", bulkMessage.getStatus());
+        assertInstanceOf(Error.class, bulkMessage.getError());
+        assertEquals(datetime, bulkMessage.getCreatedAt());
+        assertEquals(datetime, bulkMessage.getUpdatedAt());
+    }
+
+    @Test
+    void 一括送信結果取得() throws KaradenException, IOException, InterruptedException, URISyntaxException {
+        BulkMessageListMessageParams params = BulkMessageListMessageParams.newBuilder()
+            .withId("82bdf9de-a532-4bf5-86bc-c9a1366e5f4a")
+            .build();
+        RequestOptions requestOptions = TestHelper.getDefaultRequestOptionsBuilder()
+            .build();
+        String output = BulkMessage.listMessage(params, requestOptions);
+
+        assertEquals(output, null);
     }
 }

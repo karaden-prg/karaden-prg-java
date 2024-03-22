@@ -29,7 +29,7 @@ public class OkHttpRequestor implements RequestorInterface {
     public OkHttpRequestor() {
     }
 
-    public OkHttpResponse send(String method, String path, Map<String, ?> params, Map<String, ?> data, RequestOptions requestOptions) throws ConnectionException, InvalidRequestOptionsException {
+    public ResponseInterface send(String method, String path, Map<String, ?> params, Map<String, ?> data, RequestOptions requestOptions, boolean isNoContents, boolean allowRedirects) throws ConnectionException, InvalidRequestOptionsException {
         requestOptions = Config.asRequestOptions().merge(requestOptions);
         requestOptions.validate();
 
@@ -42,7 +42,7 @@ public class OkHttpRequestor implements RequestorInterface {
             .addHeader("Karaden-Version", requestOptions.apiVersion);
 
         try {
-            okhttp3.Response response = this.getHttpClient()
+            okhttp3.Response response = this.getHttpClient(allowRedirects)
                 .newBuilder()
                 .connectTimeout(requestOptions.connectionTimeout, TimeUnit.MILLISECONDS)
                 .readTimeout(requestOptions.readTimeout, TimeUnit.MILLISECONDS)
@@ -51,7 +51,7 @@ public class OkHttpRequestor implements RequestorInterface {
                 .newCall(requestBuilder.build())
                 .execute();
 
-            return new OkHttpResponse(response, requestOptions);
+            return !isNoContents ? new OkHttpResponse(response, requestOptions) : new OkHttpNoContentsResponse(response, requestOptions);
         } catch (IOException e) {
             throw new ConnectionException("Karadenへのリクエスト中にIOExceptionが発生しました。接続を確認し、もう一度やり直してください。", e);
         }
@@ -65,6 +65,13 @@ public class OkHttpRequestor implements RequestorInterface {
                 .build();
         }
         return this.httpClient;
+    }
+
+    protected OkHttpClient getHttpClient(boolean allowRedirects) {
+        return this.httpClient = (new OkHttpClient.Builder())
+                .followRedirects(allowRedirects)
+                .addInterceptor(this.buildHttpLoggingInterceptor())
+                .build();
     }
 
     protected Interceptor buildHttpLoggingInterceptor() {

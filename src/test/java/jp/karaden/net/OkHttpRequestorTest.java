@@ -70,7 +70,7 @@ public class OkHttpRequestorTest {
             .withApiBase(OkHttpRequestorTest.server.url("").uri().resolve(new URI("./")).toString())
             .build();
 
-        this.request.send("GET", path, null, null, requestOptions);
+        this.request.send("GET", path, null, null, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         String expected = HttpUrl.parse(requestOptions.getBaseUri())
@@ -95,7 +95,7 @@ public class OkHttpRequestorTest {
             .withApiBase(OkHttpRequestorTest.server.url("").uri().resolve(new URI("./")).toString())
             .build();
 
-        this.request.send(method, path, null, null, requestOptions);
+        this.request.send(method, path, null, null, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         assertEquals(method, request.getMethod());
@@ -117,7 +117,7 @@ public class OkHttpRequestorTest {
         params.put("key1", "value1");
         params.put("key2", "value2");
 
-        this.request.send("GET", path, params, null, requestOptions);
+        this.request.send("GET", path, params, null, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         String expected = HttpUrl.parse(requestOptions.getBaseUri())
@@ -146,7 +146,7 @@ public class OkHttpRequestorTest {
         data.put("key1", "value1");
         data.put("key2", "value2");
 
-        this.request.send("post", path, null, data, requestOptions);
+        this.request.send("post", path, null, data, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         Buffer expected = new Buffer();
@@ -171,7 +171,7 @@ public class OkHttpRequestorTest {
             .withApiBase(OkHttpRequestorTest.server.url("").uri().resolve(new URI("./")).toString())
             .build();
 
-        this.request.send("GET", path, null, null, requestOptions);
+        this.request.send("GET", path, null, null, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         String header = request.getHeader("Authorization");
@@ -192,7 +192,7 @@ public class OkHttpRequestorTest {
             .withApiBase(OkHttpRequestorTest.server.url("").uri().resolve(new URI("./")).toString())
             .build();
 
-        this.request.send("GET", path, null, null, requestOptions);
+        this.request.send("GET", path, null, null, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         String header = request.getHeader("Authorization");
@@ -215,7 +215,7 @@ public class OkHttpRequestorTest {
             .withApiVersion(apiVersion)
             .build();
 
-        this.request.send("GET", path, null, null, requestOptions);
+        this.request.send("GET", path, null, null, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         assertEquals(apiVersion, request.getHeader("Karaden-Version"));
@@ -234,7 +234,7 @@ public class OkHttpRequestorTest {
             .withApiBase(OkHttpRequestorTest.server.url("").uri().resolve(new URI("./")).toString())
             .build();
 
-        this.request.send("GET", path, null, null, requestOptions);
+        this.request.send("GET", path, null, null, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         assertEquals(Config.apiVersion, request.getHeader("Karaden-Version"));
@@ -256,7 +256,7 @@ public class OkHttpRequestorTest {
         Map<String, String> data = new HashMap<>();
         data.put("test", "test");
 
-        this.request.send("POST", path, null, data, requestOptions);
+        this.request.send("POST", path, null, data, requestOptions, false, true);
 
         RecordedRequest request = OkHttpRequestorTest.server.takeRequest();
         assertEquals(OkHttpRequestorTest.server.url("/").toString(), request.getRequestUrl().toString());
@@ -271,7 +271,7 @@ public class OkHttpRequestorTest {
             .withConnectionTimeout(10)
             .build();
 
-        assertThrows(ConnectionException.class, () -> this.request.send("GET", "", null, null, requestOptions));
+        assertThrows(ConnectionException.class, () -> this.request.send("GET", "", null, null, requestOptions, false, true));
     }
 
     @Test
@@ -288,7 +288,7 @@ public class OkHttpRequestorTest {
             .withReadTimeout(10)
             .build();
 
-        assertThrows(ConnectionException.class, () -> this.request.send("GET", "", null, null, requestOptions));
+        assertThrows(ConnectionException.class, () -> this.request.send("GET", "", null, null, requestOptions, false, true));
 
         OkHttpRequestorTest.server.takeRequest();
     }

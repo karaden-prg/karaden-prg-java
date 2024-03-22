@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import jp.karaden.RequestOptions;
 import jp.karaden.Utility;
 import jp.karaden.exception.BadRequestException;
-import jp.karaden.exception.FileNotFoundException;
 import jp.karaden.exception.KaradenException;
 import jp.karaden.exception.ForbiddenException;
 import jp.karaden.exception.NotFoundException;
@@ -25,7 +24,7 @@ import jp.karaden.model.Error;
 import jp.karaden.model.ErrorInterface;
 
 
-public class OkHttpResponse implements ResponseInterface {
+public class OkHttpNoContentsResponse implements ResponseInterface {
     protected final static Map<Integer, Class<?>> errors = new HashMap<>();
 
     static {
@@ -37,11 +36,12 @@ public class OkHttpResponse implements ResponseInterface {
         OkHttpResponse.errors.put(UnprocessableEntityException.STATUS_CODE, UnprocessableEntityException.class);
     }
 
-    protected KaradenObject object = null;
     protected KaradenException error = null;
+    protected int statusCode;
+    protected Headers headers;
 
     public KaradenObject getObject() {
-        return this.object;
+        throw new UnsupportedOperationException();
     }
 
     public KaradenException getError() {
@@ -49,43 +49,40 @@ public class OkHttpResponse implements ResponseInterface {
     }
 
     public int getStatusCode() {
-        throw new UnsupportedOperationException();
+        return this.statusCode;
     }
 
     public Headers getHeaders() {
-        throw new UnsupportedOperationException();
+        return this.headers;
     }
 
     public boolean isError() {
         return this.error != null;
     }
 
-    public OkHttpResponse(okhttp3.Response response, RequestOptions requestOptions) {
+    public OkHttpNoContentsResponse(okhttp3.Response response, RequestOptions requestOptions) {
         this.interpret(response, requestOptions);
     }
 
     protected void interpret(okhttp3.Response response, RequestOptions requestOptions) {
-        KaradenObject object = null;
-        int statusCode = response.code();
-        String body = null;
-        try {
-            body = response.body().string();
-            JSONObject contents = new JSONObject(body);
-            object = Utility.convertToKaradenObject(contents, requestOptions);
-        } catch (Exception e) {
-            Map<String, List<String>> headers = response.headers().toMultimap();
-            this.error = new UnexpectedValueException(statusCode, headers, body);
-            return;
+        this.statusCode = response.code();
+        this.headers = response.headers();
+        if (400 <= this.statusCode) {
+            String body = null;
+            try {
+                body = response.body().string();
+                JSONObject contents = new JSONObject(body);
+                KaradenObject object = Utility.convertToKaradenObject(contents, requestOptions);
+                Map<String, List<String>> headers = response.headers().toMultimap();
+                this.error = object.getObject() != null && object.getObject().equals("error") ?
+                    this.handleError(statusCode, headers, body, (Error)object) :
+                    new UnexpectedValueException(statusCode, headers, body);
+            } catch (Exception e) {
+                Map<String, List<String>> headers = response.headers().toMultimap();
+                this.error = new UnexpectedValueException(statusCode, headers, body);
+                return;
+            }
         }
-
-        if (200 > statusCode || 400 <= statusCode) {
-            Map<String, List<String>> headers = response.headers().toMultimap();
-            this.error = object.getObject() != null && object.getObject().equals("error") ?
-                this.handleError(statusCode, headers, body, (Error)object) :
-                new UnexpectedValueException(statusCode, headers, body);
-        }
-
-        this.object = object;
     }
 
     protected KaradenException handleError(int statusCode, Map<String, List<String>> headers, String body, Error error) {

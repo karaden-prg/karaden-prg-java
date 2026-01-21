@@ -1,0 +1,36 @@
+name: Publish Package to Maven Central
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  publish_package:
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'corretto'
+          java-version: '8'
+      - name: Build and Upload Artifacts (Staging API)
+        run: ./gradlew publish
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          ORG_GRADLE_PROJECT_gpgPrivateKey: ${{ secrets.GPG_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_gpgPassphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Publish to Maven Central
+        run: |
+          API_BASE='https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/'
+          NAMESPACE='jp.karaden'
+          BEARER_TOKEN=$(echo -n "$MAVEN_USERNAME":"$MAVEN_PASSWORD" | base64)
+
+          curl -X POST "${API_BASE}${NAMESPACE}?publishing_type=${PUBLISHING_TYPE:-automatic}" \
+            -H "Authorization: Bearer ${BEARER_TOKEN}"
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          PUBLISHING_TYPE: ${{ vars.PUBLISHING_TYPE }}

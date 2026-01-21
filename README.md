@@ -6,7 +6,7 @@ Karaden Javaライブラリは、Javaで書かれたアプリケーションか�
 ### Gradle
 あなたのプロジェクトのビルドファイルに下記の依存を追加します。
 ```groovy
-implementation 'jp.karaden:karaden-prg-java:1.2.0'
+implementation 'jp.karaden:karaden-prg-java:1.2.1'
 ```
 ### Maven
 あなたのプロジェクトのPOMファイルに下記の依存を追加します。
@@ -14,7 +14,7 @@ implementation 'jp.karaden:karaden-prg-java:1.2.0'
 <dependency>
   <groupId>jp.karaden</groupId>
   <artifactId>karaden-prg-java</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
 </dependency>
 ```
 ## 動作環境

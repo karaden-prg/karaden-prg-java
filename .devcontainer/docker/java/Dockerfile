@@ -1,4 +1,4 @@
-FROM amazoncorretto:8u402
+FROM amazoncorretto:8u402-al2023
 
 ARG USERNAME
 ARG USER_UID
@@ -10,9 +10,9 @@ ARG WORKING_DIR
 ENV LANG=${LOCALE}
 ENV TZ=${TIME_ZONE}
 
-RUN yum install -y sudo git findutils
+RUN dnf install -y sudo git findutils tar
 
-RUN yum install -y glibc-langpack-ja \
+RUN dnf install -y glibc-langpack-ja \
   && ln -snf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime \
   && echo ${TIME_ZONE} > /etc/timezone 
 

@@ -13,7 +13,8 @@
 			"settings": {
 				"[java]": {
 					"editor.renderWhitespace": "all"
-				}
+				},
+				"java.import.gradle.java.home": "/usr/lib/jvm/java-1.8.0-amazon-corretto"
 			},
 			"extensions": [
 				"vscjava.vscode-java-pack",

@@ -8,30 +8,27 @@
 	"service": "java",
 	"workspaceFolder": "/var/task",
 	// Set *default* container specific settings.json values on container create.
-	"settings": {
-		"[java]": {
-			"editor.renderWhitespace": "all"
-		},
-		"java.import.gradle.java.home": "/usr/local/sdkman/candidates/java/current",
-		"java.configuration.runtimes": [
-			{
-				"default": true,
-				"name": "JavaSE-1.8",
-				"path": "/usr/local/sdkman/candidates/java/current"
-			}
-		]
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"[java]": {
+					"editor.renderWhitespace": "all"
+				}
+			},
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vscjava.vscode-gradle",
+				"humao.rest-client"
+			]
+		}
 	},
-	"extensions": [
-		"vscjava.vscode-gradle",
-		"humao.rest-client"
-	],
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "java -version",
+	"initializeCommand": "cd .devcontainer && sh lifecycle/initialize-command.sh",
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	"remoteUser": "vscode"
+	"remoteUser": "nttcoms"
 }

@@ -55,8 +55,8 @@ publishing {
         }
         */
         maven {
-            name = "OSSRH"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            name = "OSSRH-STAGING-API"
+            url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
             credentials {
                 username = System.getenv("MAVEN_USERNAME")
                 password = System.getenv("MAVEN_PASSWORD")
@@ -96,6 +96,11 @@ publishing {
 }
 
 signing {
+    val gpgPrivateKey = providers.gradleProperty("gpgPrivateKey")
+    val gpgPassphrase = providers.gradleProperty("gpgPassphrase")
+    if (gpgPrivateKey.isPresent() && gpgPassphrase.isPresent()) {
+        useInMemoryPgpKeys(gpgPrivateKey.get(), gpgPassphrase.get())
+    }
     sign(publishing.publications["maven"])
 }
 
